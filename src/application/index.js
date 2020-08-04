@@ -98,7 +98,7 @@ class Application extends Component {
                 {pages.map((config) => (
                   <Route {...config} />
                 ))}
-                <Redirect to="/register" />
+                <Redirect to="/" />
               </Switch>
             </ComponentWrapper>
           </AppContext.Provider>
