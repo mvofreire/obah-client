@@ -41,8 +41,12 @@ class Application extends Component {
   }
 
   checkStatus = async () => {
-    const data = await checkStatus();
-    console.log(data);
+    try {
+      const data = await checkStatus();
+      console.log(data);
+    } catch (error) {
+      console.log("Servidor desativado");
+    }
   };
 
   setUserSession = (user) => {
