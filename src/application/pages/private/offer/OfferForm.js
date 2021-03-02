@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Row, Form, Modal, Input, DatePicker, Col, Button } from "antd";
-import { Icon } from "components";
+import { Icon, FileUpload } from "components";
 import moment from "moment";
+import { useAppContext } from "contexts/app";
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -14,6 +15,7 @@ const OfferCreate = ({
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
   const [dates, setDates] = useState([]);
+  const [fileList, setFileList] = useState([]);
 
   const onFinish = (values) => {
     const { period, ...rest } = values;
@@ -23,6 +25,7 @@ const OfferCreate = ({
       ...rest,
       start_date: start.toDate(),
       end_date: end.toDate(),
+      images: fileList,
     };
 
     if (!!model.id) {
@@ -60,6 +63,20 @@ const OfferCreate = ({
     const tooEarly = dates[1] && dates[1].diff(current, "days") > 7;
     return tooEarly || tooLate;
   };
+
+  const handleChange = useCallback(
+    (fileList) => {
+      setFileList(fileList);
+    },
+    [fileList]
+  );
+
+  const uploadButton = (
+    <div>
+      <Icon name="PlusOutlined" />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
 
   return (
     <>
@@ -101,6 +118,9 @@ const OfferCreate = ({
             rules={[{ required: true, message: "Por favor! Insira um titulo" }]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item label="Images" name="images">
+            <FileUpload onChange={handleChange} />
           </Form.Item>
           <Form.Item label="Sub titulo" name="subtitle">
             <Input />

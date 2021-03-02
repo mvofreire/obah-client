@@ -6,8 +6,8 @@ import history from "util/history";
 let instance;
 const createInstance = () => {
   console.log("### API_URL " + appConfig.baseUrl);
-  
-  const instance = axios.create({
+
+  instance = axios.create({
     baseURL: appConfig.baseUrl,
     timeout: 30000,
     headers: {
@@ -84,6 +84,7 @@ const request = () => {
   return {
     get,
     post,
+    postFormData,
     put,
     patch,
     delete: _delete,
@@ -92,6 +93,10 @@ const request = () => {
 
 const get = (endpoint, params) => instance.get(endpoint, { params });
 const post = (endpoint, params) => instance.post(endpoint, params);
+const postFormData = (endpoint, data) =>
+  instance.post(endpoint, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 const put = (endpoint, params) => instance.put(endpoint, params);
 const _delete = (endpoint, params) => instance.delete(endpoint, params);
 const patch = (endpoint, params) => instance.patch(endpoint, params);

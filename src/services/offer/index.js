@@ -5,7 +5,13 @@ export const loadMyOffers = async () => {
 };
 
 export const createOffer = (data) => {
-  return request.post("/client/offer", data);
+  console.log(data);
+  const { images, ...offer } = data;
+
+  const formData = new FormData();
+  images.forEach((image) => formData.append("images", image));
+  Object.keys(offer).forEach((key) => formData.append(key, offer[key]));
+  return request.postFormData("/client/offer", formData);
 };
 
 export const updateOffer = (id, data) => {
