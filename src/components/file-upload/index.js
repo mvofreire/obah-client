@@ -1,7 +1,12 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import useStyles from "./styles";
 
-export const FileUpload = ({ limit = 5, list = [], onChange }) => {
+export const FileUpload = ({
+  limit = 5,
+  list = [],
+  onChange,
+  multiple = true,
+}) => {
   const [imageList, setImageList] = useState(list);
   const classes = useStyles();
   const fileInputRef = useRef(null);
@@ -42,8 +47,9 @@ export const FileUpload = ({ limit = 5, list = [], onChange }) => {
         className={classes.hiddenInput}
         ref={fileInputRef}
         type="file"
+        accept='image/*'
         onChange={handleOnChange}
-        multiple
+        multiple={multiple}
       />
       {imageList.map((image, i) => (
         <div key={`image-${i}`}>
