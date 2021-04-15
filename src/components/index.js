@@ -7,3 +7,4 @@ export * from "./data-table";
 export * from "./icon";
 export * from "./loading";
 export * from "./file-upload";
+export * from './MapLocation'

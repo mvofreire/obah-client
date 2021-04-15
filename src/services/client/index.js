@@ -1,12 +1,13 @@
 import request from "util/request";
 
 export const checkIfEmailExists = (email) => {
-  return request.post("/client/email-exists", { email });
+  return request.post("/store/email-exists", { email });
 };
 
-export const updateClient = async (data) => {
+export const updateClient = async ({ logo }) => {
   const formData = new FormData();
+  
+  formData.append('image', logo)
 
-  Object.keys(data).forEach((key) => formData.append(key, data[key]));
-  return request.postFormData('/client/update', formData);
+  return request.postFormData("/user/image", formData);
 };

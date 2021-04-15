@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SectionContentAdminHeader } from "components";
+import { SectionContentAdminHeader, Loading } from "components";
 import { message } from "antd";
 import {
   loadMyOffers,
@@ -8,10 +8,11 @@ import {
   updateOffer,
 } from "services/offer";
 
-import OfferForm from "./OfferForm";
+import OfferForm from "./form/OfferForm";
 import OfferTable from "./OfferTable";
 
 const OfferPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [offers, setOffers] = useState([]);
   const [editModel, setEditModel] = useState({});
 
@@ -20,16 +21,25 @@ const OfferPage = () => {
   }, []);
 
   const loadOffers = async () => {
-    const data = await loadMyOffers();
-    setOffers(data);
+    try {
+      setIsLoading(true);
+      const data = await loadMyOffers();
+      setOffers(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCreate = async (offer) => {
+    setIsLoading(true);
     await createOffer(offer);
     loadOffers();
   };
 
   const handleUpdate = async (id, model) => {
+    setIsLoading(true);
     await updateOffer(id, model);
     loadOffers();
   };
@@ -38,8 +48,8 @@ const OfferPage = () => {
     try {
       await removeOffer(offer.id);
       loadOffers();
-      setModalVisible(false);
     } catch (e) {
+      console.log(e);
       message.info("Tente novamente mais tarde");
     }
   };
@@ -57,11 +67,13 @@ const OfferPage = () => {
         handleUpdate={handleUpdate}
         model={editModel}
       />
-      <OfferTable
-        data={offers}
-        handleDelete={handleDelete}
-        handleEdit={handleEdit}
-      />
+      <Loading show={isLoading}>
+        <OfferTable
+          data={offers}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+        />
+      </Loading>
     </div>
   );
 };

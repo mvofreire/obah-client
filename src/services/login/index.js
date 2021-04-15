@@ -1,7 +1,7 @@
 import request from "util/request";
 
 export const doLogin = (credentials) => {
-  return request.post("/client/login", credentials);
+  return request.post("/login", credentials);
 };
 
 export const recoveryMyPassword = (email) => {

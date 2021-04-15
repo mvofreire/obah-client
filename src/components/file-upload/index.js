@@ -1,31 +1,72 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import useStyles from "./styles";
+import { Row, Col, Image, Button, Space } from "antd";
+
+const toBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      resolve({
+        file,
+        path: reader.result,
+      });
+    };
+    reader.onerror = (error) => reject(error);
+  });
+};
 
 export const FileUpload = ({
+  id,
   limit = 5,
-  list = [],
   onChange,
   multiple = true,
+  value,
+  ...rest
 }) => {
-  const [imageList, setImageList] = useState(list);
+  const [imageList, setImageList] = useState([]);
   const classes = useStyles();
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    onChange(imageList);
+    const _data = imageList
+      .filter((item) => !!item.file)
+      .map((item) => item.file);
+    if (_data.length > 0) {
+      onChange(_data);
+    }
   }, [imageList]);
+
+  useEffect(() => {
+    if (!!value && value.length > 0) {
+      const files = value.map((path) => ({ path }));
+    }
+  }, [value]);
 
   const handleOpenSelector = () => {
     fileInputRef.current.click();
   };
 
+  const normalizeFiles = useCallback(
+    async (files) => {
+      const promises = [];
+      files.forEach((file) => {
+        promises.push(toBase64(file));
+      });
+      const data = await Promise.all(promises);
+      return data;
+    },
+    [imageList]
+  );
+
   const handleOnChange = useCallback(
-    (event) => {
+    async (event) => {
       event.stopPropagation();
       event.preventDefault();
       var files = event.target.files;
       const listFiles = Array.from(files).map((file) => file);
-      setImageList(imageList.concat(listFiles));
+      const result = await normalizeFiles(listFiles);
+      setImageList(imageList.concat(result));
     },
     [imageList]
   );
@@ -41,24 +82,40 @@ export const FileUpload = ({
   );
 
   return (
-    <div className={classes.root} onClick={handleOpenSelector}>
-      file upload
+    <div className={classes.root}>
+      <Space size={30} align="center">
+        <Button onClick={handleOpenSelector} type="dashed">
+          Selecionar Arquivos
+        </Button>
+      </Space>
       <input
         className={classes.hiddenInput}
         ref={fileInputRef}
         type="file"
-        accept='image/*'
+        accept="image/*"
         onChange={handleOnChange}
         multiple={multiple}
       />
-      {imageList.map((image, i) => (
-        <div key={`image-${i}`}>
-          <span className={classes.image}>{image.name} </span>
-          <span className={classes.remove} onClick={removeImage.bind(null, i)}>
-            X
-          </span>
-        </div>
-      ))}
+      <Image.PreviewGroup>
+        <Row gutter={[16, 16]}>
+          {imageList.map(({ path }, i) => (
+            <Col span={3} key={`image-${i}`}>
+              <Image
+                src={path}
+                height={100}
+                width={100}
+                style={{ objectFit: "cover" }}
+              />
+              <span
+                className={classes.remove}
+                onClick={removeImage.bind(null, i)}
+              >
+                X
+              </span>
+            </Col>
+          ))}
+        </Row>
+      </Image.PreviewGroup>
     </div>
   );
 };
