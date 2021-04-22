@@ -17,10 +17,7 @@ export default ({ model, form }) => {
   }, []);
 
   const handleChangePosition = useCallback((latLng) => {
-    console.log(form, latLng);
-    form.setFieldsValue({
-      position: { lat: latLng.lat, lng: latLng.lng }
-    })
+    form.setFieldsValue({ position_lat: latLng.lat, position_lng: latLng.lng })
   }, [form])
 
   const disabledDate = (current) => {
@@ -73,8 +70,10 @@ export default ({ model, form }) => {
           }}
         />
       </Form.Item>
+
+      <Form.Item name='position_lat' hidden />
+      <Form.Item name='position_lng' hidden />
       <Form.Item
-        name="position"
         label="Onde vai ser publicado essa promoção?"
       >
         <MapLocation onFoundLocation={handleChangePosition} />

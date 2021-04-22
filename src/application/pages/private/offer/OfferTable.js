@@ -1,5 +1,5 @@
 import React from "react";
-import { Space, Tag, Popconfirm, Image } from "antd";
+import { Space, Tag, Popconfirm, Image, Badge } from "antd";
 import { DataTable, Icon } from "components";
 import { formatToPTBR } from "util/date";
 
@@ -68,6 +68,17 @@ const OfferTable = ({ data, handleDelete, handleEdit }) => {
           },
         },
         {
+          key: "badges",
+          title: "Badges",
+          render(record) {
+            return <Space>
+              <Icon name="CameraFilled" color={record.images.length > 0 ? 'green' : '#999'} />
+              <Icon name="CompassFilled" color={(record.position_lat && record.position_lng) ? 'green' : '#999'} />
+              <Icon name="FireFilled" color={record.images.length > 0 ? 'green' : '#999'} />
+            </Space>
+          }
+        },
+        {
           key: "totalParticipants",
           title: "Total de Participantes",
           dataIndex: "totalParticipants",
@@ -91,6 +102,12 @@ const OfferTable = ({ data, handleDelete, handleEdit }) => {
           fixed: "right",
           render: (offer) => (
             <Space direction="horizontal">
+              <Icon
+                name="EditOutlined"
+                style={{ cursor: "pointer" }}
+                size={20}
+                onClick={handleEdit.bind(null, offer)}
+              />
               <Popconfirm
                 title="Deseja realmente deletar esse?"
                 onConfirm={handleDelete.bind(null, offer)}
